@@ -34,34 +34,64 @@ world.loadGraph(roomGraph)
 world.printRooms()
 player = Player("Name", world.startingRoom)
 
-def dft_recursive(node, visited=set()):
-        """
-        Print each vertex in depth-first order
-        beginning from starting_vertex.
-        This should be done using recursion.
-        """
-        if node not in visited:
-            visited.add(node)
-            for neighbor in vertices[node]:
-                dft_recursive(neighbor, visited)
+# stack = Stack()
+#         visited = set()
+#         stack.push(starting_vertex)
+#         while stack.size():
+#             node = stack.pop()
+#             if node not in visited:
+#                 visited.add(node)
+#                 print(node)
+#                 for edge in self.vertices[node]:
+#                     stack.push(edge)
 
 
 # FILL THIS IN
 traversalPath = []
 # Create a visited set
 visited = set()
+#Create a stack for the main functionality
+stack = Stack()
 # Create a stack to keep track of movements
+movements = Stack()
 # Create an array to store all room's exits
-# Traverse recursively all rooms
-# For each room check for exits and save then into the array
-# Move the player to each exit and add each movement to the movement stack
-# Add also each movement to the traversalPath list and remove it from the exits array
-# When the array is empty check the last movement in the stack
-#  and move the player towards the opposite direction 
-# and push this new movement into the traversalPath list
-# delete this movement from the stack while doing this
+exits = []
+# Push to the stack the first room'sid
+stack.push(player.currentRoom.id)
+# While the stack is not empty
+while stack.size():
+    node = stack.pop()
+    if node not in visited:
+        visited.add(node)
+        # For each room check for exits and save then into the array
+        exits = player.currentRoom.getExits()
+        print('exits are', exits)
+        while len(exits):
+            # Move the player to each exit and add each movement to the movement stack
+            # Add also each movement to the traversalPath list and remove it from the exits array
+            traversalPath.append(exits[-1])
+            movements.push(exits.pop())
+            player.travel(movements.peek())
+            stack.push(player.currentRoom.id)
+        # When the array is empty check the last movement in the stack
+        if movements.peek() == 'n':
+            traversalPath.append('s')
+            player.travel(movements.pop())
+        elif movements.peek() == 's':
+            traversalPath.append('n')
+            player.travel(movements.pop())
+        elif movements.peek() ==  'e':
+            traversalPath.append('w')
+            player.travel(movements.pop())
+        elif movements.peek() == 'w':
+            traversalPath.append('e')
+            player.travel(movements.pop())
+        print('visited:', visited)
+            #  and move the player towards the opposite direction 
+            # and push this new movement into the traversalPath list
+            # delete this movement from the stack while doing this
 
-
+print('final', traversalPath)
 # TRAVERSAL TEST
 visited_rooms = set()
 player.currentRoom = world.startingRoom
