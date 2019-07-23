@@ -20,7 +20,8 @@ class Stack():
     def size(self):
         return len(self.stack)
     def peek(self):
-        return self.stack[-1]
+        if len(self.stack):
+            return self.stack[-1]
 
 # You may uncomment the smaller graphs for development and testing purposes.
 
@@ -65,27 +66,49 @@ while stack.size():
         visited.add(node)
         # For each room check for exits and save then into the array
         exits = player.currentRoom.getExits()
-        print('exits are', exits)
+        
         while len(exits):
-            # Move the player to each exit and add each movement to the movement stack
-            # Add also each movement to the traversalPath list and remove it from the exits array
-            traversalPath.append(exits[-1])
-            movements.push(exits.pop())
-            player.travel(movements.peek())
-            stack.push(player.currentRoom.id)
+            print('exits are', exits)
+            def backtrack(movements):
+                if movements.peek() == 'n':
+                    traversalPath.append('s')
+                    player.travel(movements.pop())
+                elif movements.peek() == 's':
+                    traversalPath.append('n')
+                    player.travel(movements.pop())
+                elif movements.peek() ==  'e':
+                    traversalPath.append('w')
+                    player.travel(movements.pop())
+                elif movements.peek() == 'w':
+                    traversalPath.append('e')
+                    player.travel(movements.pop())
+
+            def gettingExits(exits):
+                if len(exits) > 1:
+                    for exit in exits:
+                        traversalPath.append(exit)
+                        movements.push(exit)
+                        player.travel(exit)
+                        exits.remove(exit)
+                        stack.push(player.currentRoom.id)
+                    gettingExits(player.currentRoom.getExits())
+                else:
+                    backtrack(movements)
+
+            gettingExits(exits)
+                    
+            
+
+            
+                    
+                # Move the player to each exit and add each movement to the movement stack
+                # Add also each movement to the traversalPath list and remove it from the exits array
+                # traversalPath.append(exits[-1])
+                # movements.push(exits.pop())
+                # player.travel(movements.peek())
+                # stack.push(player.currentRoom.id)
         # When the array is empty check the last movement in the stack
-        if movements.peek() == 'n':
-            traversalPath.append('s')
-            player.travel(movements.pop())
-        elif movements.peek() == 's':
-            traversalPath.append('n')
-            player.travel(movements.pop())
-        elif movements.peek() ==  'e':
-            traversalPath.append('w')
-            player.travel(movements.pop())
-        elif movements.peek() == 'w':
-            traversalPath.append('e')
-            player.travel(movements.pop())
+        
         print('visited:', visited)
             #  and move the player towards the opposite direction 
             # and push this new movement into the traversalPath list
