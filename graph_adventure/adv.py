@@ -57,8 +57,35 @@ stack = Stack()
 movements = Stack()
 # Create an array to store all room's exits
 exits = []
+def backtrack(movements):
+    if movements.peek() == 'n':
+        traversalPath.append('s')
+        player.travel(movements.pop())
+    elif movements.peek() == 's':
+        traversalPath.append('n')
+        player.travel(movements.pop())
+    elif movements.peek() ==  'e':
+        traversalPath.append('w')
+        player.travel(movements.pop())
+    elif movements.peek() == 'w':
+        traversalPath.append('e')
+        player.travel(movements.pop())
+
+def gettingExits(exits):
+    if len(exits) > 1:
+        for exit in exits:
+            traversalPath.append(exit)
+            movements.push(exit)
+            player.travel(exit)
+            exits.remove(exit)
+            stack.push(player.currentRoom.id)
+        gettingExits(player.currentRoom.getExits())
+    else:
+        backtrack(movements)
 # Push to the stack the first room'sid
 stack.push(player.currentRoom.id)
+
+
 # While the stack is not empty
 while stack.size():
     node = stack.pop()
@@ -69,32 +96,6 @@ while stack.size():
         
         while len(exits):
             print('exits are', exits)
-            def backtrack(movements):
-                if movements.peek() == 'n':
-                    traversalPath.append('s')
-                    player.travel(movements.pop())
-                elif movements.peek() == 's':
-                    traversalPath.append('n')
-                    player.travel(movements.pop())
-                elif movements.peek() ==  'e':
-                    traversalPath.append('w')
-                    player.travel(movements.pop())
-                elif movements.peek() == 'w':
-                    traversalPath.append('e')
-                    player.travel(movements.pop())
-
-            def gettingExits(exits):
-                if len(exits) > 1:
-                    for exit in exits:
-                        traversalPath.append(exit)
-                        movements.push(exit)
-                        player.travel(exit)
-                        exits.remove(exit)
-                        stack.push(player.currentRoom.id)
-                    gettingExits(player.currentRoom.getExits())
-                else:
-                    backtrack(movements)
-
             gettingExits(exits)
                     
             
@@ -109,12 +110,12 @@ while stack.size():
                 # stack.push(player.currentRoom.id)
         # When the array is empty check the last movement in the stack
         
-        print('visited:', visited)
-            #  and move the player towards the opposite direction 
-            # and push this new movement into the traversalPath list
-            # delete this movement from the stack while doing this
+#         print('visited:', visited)
+#             #  and move the player towards the opposite direction 
+#             # and push this new movement into the traversalPath list
+#             # delete this movement from the stack while doing this
 
-print('final', traversalPath)
+# print('final', traversalPath)
 # TRAVERSAL TEST
 visited_rooms = set()
 player.currentRoom = world.startingRoom
